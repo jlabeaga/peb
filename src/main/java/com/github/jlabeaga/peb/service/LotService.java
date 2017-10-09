@@ -34,8 +34,8 @@ public class LotService {
 		return lotRepository.findAll();
 	}
 	
-	public List<Lot> findByInput(Input input) {
-		return lotRepository.findByInput(input.getId());
+	public List<Lot> findByInput(Long inputId) {
+		return lotRepository.findByInput(inputId);
 	}
 	
 	public Lot findOne(Long id) {

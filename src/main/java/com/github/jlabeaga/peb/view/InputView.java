@@ -21,6 +21,7 @@ import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
 import com.vaadin.server.Page;
 import com.vaadin.spring.annotation.SpringView;
+import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.ComboBox;
 import com.vaadin.ui.DateField;
@@ -87,6 +88,8 @@ public class InputView extends VerticalLayout implements View {
 	private void layout() {
 		company.setItems(companyService.findAll());
 		searchLayout.addComponents(year, company, searchButton, dateFrom, dateTo, newButton);
+		searchLayout.setDefaultComponentAlignment(Alignment.BOTTOM_LEFT);
+		//searchLayout.setSpacing(true);
 		addComponent(searchLayout);
 		grid.setColumns();
 		grid.addColumn(Input::getInputDate).setCaption("Fecha entrada");
@@ -99,7 +102,7 @@ public class InputView extends VerticalLayout implements View {
 	}
 	
 	private void delete(Input input) {
-		if( !lotService.findByInput(input).isEmpty() ) {
+		if( !lotService.findByInput(input.getId()).isEmpty() ) {
 			Notification.show("Elimine todos los lotes asociados antes de intentar eliminar la Entrada", Notification.TYPE_ERROR_MESSAGE);
 			return;
 		}

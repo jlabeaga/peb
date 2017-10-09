@@ -5,7 +5,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.github.jlabeaga.peb.model.Company;
-import com.github.jlabeaga.peb.model.Role;
+import com.github.jlabeaga.peb.model.User.Role;
 import com.github.jlabeaga.peb.model.User;
 import com.github.jlabeaga.peb.service.CompanyService;
 import com.github.jlabeaga.peb.service.UserService;
@@ -54,7 +54,7 @@ public class UserDetailView extends FormLayout implements View {
 	private TextField firstname = new TextField("Nombre:");
 	private TextField lastname = new TextField("Apellidos:");
 	private TextField phone = new TextField("Telefono:");
-	private ComboBox<Role> role = new ComboBox<>("Rol:");
+	private ComboBox<User.Role> role = new ComboBox<>("Rol:");
 	private ComboBox<Company> company = new ComboBox<>("Productor:");
 	private ComboBox<User.Status> status = new ComboBox<>("Estado:");
     
@@ -71,7 +71,8 @@ public class UserDetailView extends FormLayout implements View {
 	private void layout() {
 		addComponents(email, nickname, firstname, lastname, phone, role, company, status);
 		
-		role.setItems(Role.USER, Role.ADMIN);
+		role.setItems(User.Role.USER, User.Role.ADMIN, User.Role.OPERATOR);
+		role.setItemCaptionGenerator(role -> role.getDescription());
 		company.setItemCaptionGenerator(company -> company.getName());
 		company.setItems(companyService.findAll());
 		status.setItems(User.Status.values());

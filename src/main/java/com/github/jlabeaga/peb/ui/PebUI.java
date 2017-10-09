@@ -44,6 +44,7 @@ public class PebUI extends UI {
 	@Override
 	protected void init(VaadinRequest request) {
 		menu = new MenuBar();
+		menu = menuFactory.buildHomeMenu(menu, getNavigator());
 		menu = menuFactory.buildUserMenu(menu, getNavigator());
 		menu = menuFactory.buildAdminMenu(menu, getNavigator());
 		menu = menuFactory.buildOperatorMenu(menu, getNavigator());

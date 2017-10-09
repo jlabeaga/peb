@@ -21,11 +21,18 @@ public class MenuFactory {
 	@Autowired
 	private NavigationStack navigationStack; 
 
+	public MenuBar buildHomeMenu(MenuBar menu, Navigator navigator) {
+		MenuItem userMenuItem = menu.addItem("Home", 
+				(MenuItem selectedItem) -> { navigationStack.reset(); navigator.navigateTo(""); }
+		);
+		return menu;
+	}
+
 	public MenuBar buildUserMenu(MenuBar menu, Navigator navigator) {
-		MenuItem userMenuItem = menu.addItem("Entradas", null);
+		MenuItem userMenuItem = menu.addItem("Usuario", null);
 		navigator.addView("", EmptyView.class);
 
-		MenuItem helloMenuItem = userMenuItem.addItem("Usuarios",
+		MenuItem helloMenuItem = userMenuItem.addItem("Hello",
 				(MenuItem selectedItem) -> { navigationStack.reset(); navigator.navigateTo(HelloView.NAME); }
 		);
 

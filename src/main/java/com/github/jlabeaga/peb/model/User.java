@@ -35,6 +35,24 @@ public class User extends AbstractEntity {
 		}
 	}
 	
+	public enum Role {
+		USER("Usuario"),
+		ADMIN("Administrador"),
+		OPERATOR("Operador");
+
+		private String description;
+		
+		private Role(String description) {
+			this.description = description;
+		}
+		
+		public String getDescription() {
+			return description;
+		}
+	
+	}
+	
+	
 	@NotNull(message = "El username es obligatorio")
     @Pattern(regexp = ".+@.+\\.[a-z]+", message = "El email debe tener un formato correcto")
     private String email; // username = email
