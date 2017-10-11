@@ -114,7 +114,8 @@ public class CompanyDetailView extends FormLayout implements View {
 	}
 	
 	public void duplicate(Long id) {
-		populate(id);
+		company = companyService.findOne(id);
+		activeUsers.setHeightByRows(1);
 		company.setNew();
 	}
 	

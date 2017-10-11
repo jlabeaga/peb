@@ -17,7 +17,6 @@ import com.github.jlabeaga.peb.repository.InputRepository;
 import com.github.jlabeaga.peb.repository.LotRepository;
 import com.github.jlabeaga.peb.repository.PartRepository;
 import com.github.jlabeaga.peb.repository.UserRepository;
-import com.github.jlabeaga.peb.view.UserDetailView;
 
 @Service
 public class LotService {

@@ -72,26 +72,7 @@ public class HelloView extends VerticalLayout implements View {
 //		addComponent(grid);
 	}
 	
-	private void delete(Company company) {
-		companyService.delete(company);
-		Notification.show("Elemento eliminado");
-		populate();
-	}
-	
-	private void edit(Company company) {
-		pushReturnViewState();
-		navigationUtils.navigateTo( new ViewState(CompanyDetailView.NAME, NavigationOperation.EDIT, company.getId()) );
-	}
-	
-	private void newElement() {
-		pushReturnViewState();
-		navigationUtils.navigateTo( new ViewState(CompanyDetailView.NAME, NavigationOperation.NEW, null) );
-	}
-	
-	private void duplicate(Company company) {
-		pushReturnViewState();
-		navigationUtils.navigateTo( new ViewState(CompanyDetailView.NAME, NavigationOperation.DUPLICATE, company.getId()) );
-	}
+
 	
 	private void populate() {
 		log.debug("inside HelloView.populate()");

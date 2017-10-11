@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.github.jlabeaga.peb.model.User;
+import com.github.jlabeaga.peb.model.User;
 import com.github.jlabeaga.peb.service.UserService;
 import com.github.jlabeaga.peb.ui.AdminUI;
 import com.github.jlabeaga.peb.ui.PebUI;
@@ -55,22 +56,22 @@ public class UserView extends VerticalLayout implements View {
 		grid.addColumn(User::getPhone).setCaption("Teléfono");
 		grid.addColumn(user->user.getStatus().getDescription()).setCaption("Estado");
 		grid.addColumn(user->user.getCompany().getName()).setCaption("Productor");
-		grid.addComponentColumn(company -> new Button("Editar", event -> edit(company)));
-		grid.addComponentColumn(company -> new Button("Duplicar", event -> duplicate(company)));
-		grid.addComponentColumn(company -> new Button("Borrar", event -> delete(company)));
+		grid.addComponentColumn(userDTO -> new Button("Editar", event -> edit(userDTO.getId())));
+		grid.addComponentColumn(userDTO -> new Button("Duplicar", event -> duplicate(userDTO.getId())));
+		grid.addComponentColumn(userDTO -> new Button("Borrar", event -> delete(userDTO.getId())));
 		grid.setSizeFull();
 		addComponent(grid);
 	}
 	
-	private void delete(User user) {
-		userService.delete(user);
+	private void delete(Long id) {
+		userService.delete(id);
 		Notification.show("Elemento eliminado");
 		populate();
 	}
 	
-	private void edit(User user) {
+	private void edit(Long id) {
 		pushReturnViewState();
-		navigationUtils.navigateTo( new ViewState(UserDetailView.NAME, NavigationOperation.EDIT, user.getId()) );
+		navigationUtils.navigateTo( new ViewState(UserDetailView.NAME, NavigationOperation.EDIT, id) );
 	}
 	
 	private void newElement() {
@@ -78,9 +79,9 @@ public class UserView extends VerticalLayout implements View {
 		navigationUtils.navigateTo( new ViewState(UserDetailView.NAME, NavigationOperation.NEW, null) );
 	}
 	
-	private void duplicate(User user) {
+	private void duplicate(Long id) {
 		pushReturnViewState();
-		navigationUtils.navigateTo( new ViewState(UserDetailView.NAME, NavigationOperation.DUPLICATE, user.getId()) );
+		navigationUtils.navigateTo( new ViewState(UserDetailView.NAME, NavigationOperation.DUPLICATE, id) );
 	}
 	
 	private void populate() {

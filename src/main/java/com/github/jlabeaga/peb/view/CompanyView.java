@@ -1,29 +1,19 @@
 package com.github.jlabeaga.peb.view;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.github.jlabeaga.peb.model.Company;
 import com.github.jlabeaga.peb.service.CompanyService;
-import com.github.jlabeaga.peb.ui.AdminUI;
 import com.github.jlabeaga.peb.ui.PebUI;
-import com.vaadin.annotations.Title;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
-import com.vaadin.server.FontAwesome;
 import com.vaadin.server.Page;
 import com.vaadin.spring.annotation.SpringView;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Grid;
-import com.vaadin.ui.Label;
 import com.vaadin.ui.Notification;
-import com.vaadin.ui.Panel;
-import com.vaadin.ui.TabSheet;
-import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 
 @SpringView(name=CompanyView.NAME, ui=PebUI.class)
@@ -61,22 +51,22 @@ public class CompanyView extends VerticalLayout implements View {
 		grid.addColumn(Company::getName).setCaption("Nombre");
 		grid.addColumn(Company::getNif).setCaption("NIF/CIF");
 		grid.addColumn(company->company.isEnabled()?"Activo":"Inactivo").setCaption("Estado");
-		grid.addComponentColumn(company -> new Button("Editar", event -> edit(company)));
-		grid.addComponentColumn(company -> new Button("Duplicar", event -> duplicate(company)));
-		grid.addComponentColumn(company -> new Button("Borrar", event -> delete(company)));
+		grid.addComponentColumn(company -> new Button("Editar", event -> edit(company.getId())));
+		grid.addComponentColumn(company -> new Button("Duplicar", event -> duplicate(company.getId())));
+		grid.addComponentColumn(company -> new Button("Borrar", event -> delete(company.getId())));
 		grid.setSizeFull();
 		addComponent(grid);
 	}
 	
-	private void delete(Company company) {
-		companyService.delete(company);
+	private void delete(Long id) {
+		companyService.delete(id);
 		Notification.show("Elemento eliminado");
 		populate();
 	}
 	
-	private void edit(Company company) {
+	private void edit(Long id) {
 		pushReturnViewState();
-		navigationUtils.navigateTo( new ViewState(CompanyDetailView.NAME, NavigationOperation.EDIT, company.getId()) );
+		navigationUtils.navigateTo( new ViewState(CompanyDetailView.NAME, NavigationOperation.EDIT, id) );
 	}
 	
 	private void newElement() {
@@ -84,9 +74,9 @@ public class CompanyView extends VerticalLayout implements View {
 		navigationUtils.navigateTo( new ViewState(CompanyDetailView.NAME, NavigationOperation.NEW, null) );
 	}
 	
-	private void duplicate(Company company) {
+	private void duplicate(Long id) {
 		pushReturnViewState();
-		navigationUtils.navigateTo( new ViewState(CompanyDetailView.NAME, NavigationOperation.DUPLICATE, company.getId()) );
+		navigationUtils.navigateTo( new ViewState(CompanyDetailView.NAME, NavigationOperation.DUPLICATE, id) );
 	}
 	
 	private void populate() {

@@ -8,10 +8,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.github.jlabeaga.peb.model.Company;
+import com.github.jlabeaga.peb.model.QUser;
 import com.github.jlabeaga.peb.model.User;
+import com.github.jlabeaga.peb.model.UserDTO;
 import com.github.jlabeaga.peb.repository.CompanyRepository;
 import com.github.jlabeaga.peb.repository.UserRepository;
-import com.github.jlabeaga.peb.view.UserDetailView;
+import com.querydsl.core.types.Predicate;
+import com.querydsl.jpa.impl.JPAQueryFactory;
 
 @Service
 public class UserService {
@@ -20,24 +23,33 @@ public class UserService {
 
 	@Autowired
 	private UserRepository userRepository;
+
+//	// JPA repository interface example
+//	public List<User> findAll() {
+//		return userRepository.findAll();
+//	}
 	
+	// QueryDSL example
 	public List<User> findAll() {
-		return userRepository.findAll();
+		QUser user = QUser.user;
+		Predicate all = user.nickname.like("%");
+		log.debug("Executing querydsl predicate: " + all);
+		return userRepository.findAll(all);
 	}
 	
 	public User findOne(Long id) {
 		return userRepository.findOne(id);
 	}
 	
-	public void delete(User user) {
-		userRepository.delete(user);
+	public void delete(Long id) {
+		userRepository.delete(id);
 	}
 
 	public void save(User user) {
 		userRepository.save(user);
 	}
 
-	public List<User>  findActiveUsersOfCompany(Long companyId) {
+	public List<User> findActiveUsersOfCompany(Long companyId) {
 		log.debug("findActiveUsersOfCompany for companyId="+companyId);
 		return userRepository.findActiveUsersOfCompany(companyId);
 	}
