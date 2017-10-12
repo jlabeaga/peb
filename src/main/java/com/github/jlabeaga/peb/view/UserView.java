@@ -4,12 +4,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.github.jlabeaga.peb.model.User;
-import com.github.jlabeaga.peb.model.User;
+import com.github.jlabeaga.peb.model.UserDTO;
+import com.github.jlabeaga.peb.repository.QueryService;
 import com.github.jlabeaga.peb.service.UserService;
-import com.github.jlabeaga.peb.ui.AdminUI;
 import com.github.jlabeaga.peb.ui.PebUI;
-import com.vaadin.annotations.Title;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
 import com.vaadin.server.Page;
@@ -37,25 +35,28 @@ public class UserView extends VerticalLayout implements View {
 	private NavigationStack navigationStack; 
 
 	@Autowired
+	private QueryService queryService; 
+	
+	@Autowired
 	private UserService userService; 
 	
-	private Grid<User> grid;
+	private Grid<UserDTO> grid;
 	private Button newButton;
 	
 	public UserView() {
 		log.debug("inside UserView creator");
-		grid = new Grid<>(User.class);
+		grid = new Grid<>(UserDTO.class);
 		newButton = new Button("Nuevo", event -> newElement() );
 	}
 
 	private void layout() {
 		addComponent(newButton);
 		grid.setColumns();
-		grid.addColumn(User::getNickname).setCaption("Nombre");
-		grid.addColumn(User::getEmail).setCaption("Email");
-		grid.addColumn(User::getPhone).setCaption("Teléfono");
-		grid.addColumn(user->user.getStatus().getDescription()).setCaption("Estado");
-		grid.addColumn(user->user.getCompany().getName()).setCaption("Productor");
+		grid.addColumn(UserDTO::getNickname).setCaption("Nombre");
+		grid.addColumn(UserDTO::getEmail).setCaption("Email");
+		grid.addColumn(UserDTO::getPhone).setCaption("Teléfono");
+		grid.addColumn(userDTO->userDTO.getStatus()).setCaption("Estado");
+		grid.addColumn(userDTO->userDTO.getCompanyName()).setCaption("Productor");
 		grid.addComponentColumn(userDTO -> new Button("Editar", event -> edit(userDTO.getId())));
 		grid.addComponentColumn(userDTO -> new Button("Duplicar", event -> duplicate(userDTO.getId())));
 		grid.addComponentColumn(userDTO -> new Button("Borrar", event -> delete(userDTO.getId())));
@@ -87,7 +88,8 @@ public class UserView extends VerticalLayout implements View {
 	private void populate() {
 		log.debug("inside UserView.populate()");
 		if( userService == null ) return;
-		grid.setItems( userService.findAll() );
+//		grid.setItems( userService.findAll() );
+		grid.setItems( queryService.listUsers() );
 	}
 	
 	private void pushReturnViewState() {
