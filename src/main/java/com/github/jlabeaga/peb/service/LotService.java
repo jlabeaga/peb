@@ -7,10 +7,12 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.github.jlabeaga.peb.exception.PebBusinessException;
 import com.github.jlabeaga.peb.model.Company;
 import com.github.jlabeaga.peb.model.Input;
 import com.github.jlabeaga.peb.model.Lot;
 import com.github.jlabeaga.peb.model.Part;
+import com.github.jlabeaga.peb.model.SearchCriteria;
 import com.github.jlabeaga.peb.model.User;
 import com.github.jlabeaga.peb.repository.CompanyRepository;
 import com.github.jlabeaga.peb.repository.InputRepository;
@@ -41,8 +43,11 @@ public class LotService {
 		return lotRepository.findOne(id);
 	}
 	
-	public void delete(Lot lot) {
-		lotRepository.delete(lot);
+	public void delete(Long id) throws PebBusinessException {
+		if( !isUnassigned(id) ) {
+			throw new PebBusinessException("No se puede eliminar el lote porque tiene partidas asignadas a algún palet");
+		}
+		lotRepository.delete(id);
 	}
 
 	public void save(Lot lot) {
@@ -54,12 +59,12 @@ public class LotService {
 		return lotRepository.findAll();
 	}
 	
-	public List<Part> getParts(Lot lot) {
-		return partRepository.getParts(lot.getId());
+	public List<Part> getParts(Long lotId) {
+		return partRepository.getParts(lotId);
 	}
 
-	public boolean isUnassigned(Lot lot) {
-		List<Part> parts = getParts(lot);
+	public boolean isUnassigned(Long lotId) {
+		List<Part> parts = getParts(lotId);
 		for( Part part : parts ) {
 			if( part.getStatus() != Part.Status.UNASSIGNED ) {
 				return false;

@@ -1,6 +1,6 @@
 package com.github.jlabeaga.peb.model;
 
-import lombok.Data;
+//import lombok.Data;
 
 //@Data
 public class UserDTO {

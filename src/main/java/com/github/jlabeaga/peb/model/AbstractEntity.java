@@ -34,6 +34,10 @@ public abstract class AbstractEntity implements Serializable, Cloneable {
         this.version = 0;
     }
 
+    public boolean isNew() {
+        return this.id == null;
+    }
+
     @Override
     public boolean equals(Object obj) {
         if (this == obj) {

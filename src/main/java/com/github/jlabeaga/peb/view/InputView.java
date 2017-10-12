@@ -1,21 +1,16 @@
 package com.github.jlabeaga.peb.view;
 
-import java.time.LocalDate;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.github.jlabeaga.peb.model.Company;
 import com.github.jlabeaga.peb.model.Input;
+import com.github.jlabeaga.peb.model.SearchCriteria;
 import com.github.jlabeaga.peb.service.CompanyService;
 import com.github.jlabeaga.peb.service.InputService;
 import com.github.jlabeaga.peb.service.LotService;
-import com.github.jlabeaga.peb.service.SearchCriteria;
-import com.github.jlabeaga.peb.ui.AdminUI;
-import com.github.jlabeaga.peb.ui.OperatorUI;
 import com.github.jlabeaga.peb.ui.PebUI;
-import com.vaadin.annotations.Title;
 import com.vaadin.data.Binder;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
@@ -28,7 +23,6 @@ import com.vaadin.ui.DateField;
 import com.vaadin.ui.Grid;
 import com.vaadin.ui.GridLayout;
 import com.vaadin.ui.Notification;
-import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
 
 @SpringView(name=InputView.NAME, ui=PebUI.class)
@@ -62,7 +56,7 @@ public class InputView extends VerticalLayout implements View {
 	
 	Binder<SearchCriteria> binder = new Binder<>(SearchCriteria.class);
 	
-	private TextField year;
+	private ComboBox<Integer> year;
 	private DateField dateFrom;
 	private DateField dateTo;
 	private ComboBox<Company> company;
@@ -74,8 +68,8 @@ public class InputView extends VerticalLayout implements View {
 	public InputView() {
 		log.debug("inside InputView creator");
 		grid = new Grid<>(Input.class);
-		year = new TextField("Año");
-		year.setValue(String.valueOf(LocalDate.now().getYear()));
+		year = new ComboBox<>("Año");
+		year.setValue(SearchCriteria.presentYear);
 		dateFrom = new DateField("Desde:");
 		dateTo = new DateField("Hasta:");
 		company = new ComboBox<>("Productor");
@@ -86,6 +80,7 @@ public class InputView extends VerticalLayout implements View {
 	}
 
 	private void layout() {
+		year.setItems(SearchCriteria.years);
 		company.setItems(companyService.findAll());
 		searchLayout.addComponents(year, company, searchButton, dateFrom, dateTo, newButton);
 		searchLayout.setDefaultComponentAlignment(Alignment.BOTTOM_LEFT);
@@ -94,26 +89,26 @@ public class InputView extends VerticalLayout implements View {
 		grid.setColumns();
 		grid.addColumn(Input::getInputDate).setCaption("Fecha entrada");
 		grid.addColumn(input->input.getCompany().getName()).setCaption("Productor");
-		grid.addComponentColumn(input -> new Button("Editar", event -> edit(input)));
-		grid.addComponentColumn(input -> new Button("Duplicar", event -> duplicate(input)));
-		grid.addComponentColumn(input -> new Button("Borrar", event -> delete(input)));
+		grid.addComponentColumn(input -> new Button("Editar", event -> edit(input.getId())));
+		grid.addComponentColumn(input -> new Button("Duplicar", event -> duplicate(input.getId())));
+		grid.addComponentColumn(input -> new Button("Borrar", event -> delete(input.getId())));
 		grid.setSizeFull();
 		addComponent(grid);
 	}
 	
-	private void delete(Input input) {
-		if( !lotService.findByInput(input.getId()).isEmpty() ) {
+	private void delete(Long id) {
+		if( !lotService.findByInput(id).isEmpty() ) {
 			Notification.show("Elimine todos los lotes asociados antes de intentar eliminar la Entrada", Notification.TYPE_ERROR_MESSAGE);
 			return;
 		}
-		inputService.delete(input);
+		inputService.delete(id);
 		Notification.show("Elemento eliminado");
 		search();
 	}
 	
-	private void edit(Input input) {
+	private void edit(Long id) {
 		pushReturnViewState();
-		navigationUtils.navigateTo( new ViewState(InputDetailView.NAME, NavigationOperation.EDIT, input.getId()) );
+		navigationUtils.navigateTo( new ViewState(InputDetailView.NAME, NavigationOperation.EDIT, id) );
 	}
 	
 	private void newElement() {
@@ -121,9 +116,9 @@ public class InputView extends VerticalLayout implements View {
 		navigationUtils.navigateTo( new ViewState(InputDetailView.NAME, NavigationOperation.NEW, null) );
 	}
 	
-	private void duplicate(Input input) {
+	private void duplicate(Long id) {
 		pushReturnViewState();
-		navigationUtils.navigateTo( new ViewState(InputDetailView.NAME, NavigationOperation.DUPLICATE, input.getId()) );
+		navigationUtils.navigateTo( new ViewState(InputDetailView.NAME, NavigationOperation.DUPLICATE, id) );
 	}
 	
 	private void search() {

@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import com.github.jlabeaga.peb.model.Company;
 import com.github.jlabeaga.peb.model.Input;
+import com.github.jlabeaga.peb.model.SearchCriteria;
 import com.github.jlabeaga.peb.model.User;
 import com.github.jlabeaga.peb.repository.CompanyRepository;
 import com.github.jlabeaga.peb.repository.InputRepository;
@@ -30,8 +31,8 @@ public class InputService {
 		return inputRepository.findOne(id);
 	}
 	
-	public void delete(Input input) {
-		inputRepository.delete(input);
+	public void delete(Long id) {
+		inputRepository.delete(id);
 	}
 
 	public void save(Input input) {

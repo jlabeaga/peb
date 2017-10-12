@@ -7,10 +7,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import com.github.jlabeaga.peb.exception.PebBusinessException;
 import com.github.jlabeaga.peb.model.Company;
 import com.github.jlabeaga.peb.model.Input;
 import com.github.jlabeaga.peb.model.Lot;
 import com.github.jlabeaga.peb.model.User;
+import com.github.jlabeaga.peb.repository.InputRepository;
 import com.github.jlabeaga.peb.service.CompanyService;
 import com.github.jlabeaga.peb.service.InputService;
 import com.github.jlabeaga.peb.service.LotService;
@@ -28,6 +30,7 @@ import com.vaadin.ui.DateField;
 import com.vaadin.ui.FormLayout;
 import com.vaadin.ui.Grid;
 import com.vaadin.ui.Notification;
+import com.vaadin.ui.Notification.Type;
 import com.vaadin.ui.VerticalLayout;
 
 @SpringView(name=InputDetailView.NAME, ui=PebUI.class)
@@ -61,7 +64,7 @@ public class InputDetailView extends VerticalLayout implements View {
 	private FormLayout formDataLayout = new FormLayout();
 	private DateField inputDate = new DateField("Fecha de entrada:");
 	private ComboBox<Company> company = new ComboBox<>("Productor:");
-	Button newSubelementButton = new Button("Nuevo lote");
+	Button newLotButton = new Button("Nuevo lote");
 
 	private Grid<Lot> lots = new Grid<>(Lot.class);
 
@@ -72,7 +75,7 @@ public class InputDetailView extends VerticalLayout implements View {
 	Binder<Input> binder = new Binder<>(Input.class);
 
 	public InputDetailView() {
-		log.debug("inside CompanyDetailView creator");
+		log.debug("inside InputDetailView creator");
 	}
 	
 	private void layout() {
@@ -84,7 +87,8 @@ public class InputDetailView extends VerticalLayout implements View {
 		formDataLayout.addComponents(inputDate, company);
 		addComponent(formDataLayout);
 		
-		addComponent(newSubelementButton);
+		addComponent(newLotButton);
+		newLotButton.addClickListener(event->newLot());
 		
 		addComponent(lots);
 		lots.setColumns();
@@ -95,9 +99,9 @@ public class InputDetailView extends VerticalLayout implements View {
 		lots.addColumn(Lot::getWeightGross).setCaption("Kg brutos");
 		lots.addColumn(Lot::getWeightNet).setCaption("Kg netos");
 		lots.addColumn(Lot::getWeightProcessed).setCaption("Kg procesados");
-		lots.addComponentColumn(lot -> new Button("Editar", event -> editSubelement(lot)));
-		lots.addComponentColumn(lot -> new Button("Duplicar", event -> duplicateSubelement(lot)));
-		lots.addComponentColumn(lot -> new Button("Borrar", event -> deleteSubelement(lot)));
+		lots.addComponentColumn(lot -> new Button("Editar", event -> editLot(lot.getId())));
+		lots.addComponentColumn(lot -> new Button("Duplicar", event -> duplicateLot(lot.getId())));
+		lots.addComponentColumn(lot -> new Button("Borrar", event -> deleteLot(lot.getId())));
 		lots.setSizeFull();
 		lots.setHeightMode(HeightMode.ROW);
 
@@ -112,11 +116,11 @@ public class InputDetailView extends VerticalLayout implements View {
 	
 	public void populate(Long id) {
 		input = inputService.findOne(id);
-		List<Lot> lotList = lotService.findByInput(input.getId());
+		List<Lot> lotList = lotService.findByInput(id);
 		lots.setItems(lotList);
 		lots.setHeightByRows(Math.max(1, lotList.size()));
 	}
-	
+
 	public void newElement() {
 		input = new Input();
 		input.setInputDate(LocalDate.now());
@@ -124,8 +128,9 @@ public class InputDetailView extends VerticalLayout implements View {
 	}
 	
 	public void duplicate(Long id) {
-		populate(id);
-		input.setNew();
+		newElement();
+		Input oldInput = inputService.findOne(id);
+		input.setCompany(oldInput.getCompany());
 	}
 	
 	private void save() {
@@ -135,25 +140,32 @@ public class InputDetailView extends VerticalLayout implements View {
 	}
 	
 	
-	private void deleteSubelement(Lot lot) {
-		lotService.delete(lot);
-		Notification.show("Elemento eliminado");
+	private void deleteLot(Long lotId) {
+		try {
+			lotService.delete(lotId);
+			Notification.show("Elemento eliminado");
+		} catch (PebBusinessException e) {
+			Notification.show(e.getMessage(), Type.ERROR_MESSAGE);
+		}
 		populate(input.getId());
 	}
 	
-	private void editSubelement(Lot lot) {
+	private void editLot(Long id) {
 		pushReturnViewState();
-		navigationUtils.navigateTo( new ViewState(InputDetailView.NAME, NavigationOperation.EDIT, lot.getId()) );
+		navigationUtils.navigateTo( new ViewState(LotDetailView.NAME, NavigationOperation.EDIT, id) );
 	}
 	
-	private void newSubelement() {
+	private void newLot() {
+		if( input.isNew() ) {
+			inputService.save(input);
+		}
 		pushReturnViewState();
-		navigationUtils.navigateTo( new ViewState(InputDetailView.NAME, NavigationOperation.NEW, null) );
+		navigationUtils.navigateTo( new ViewState(LotDetailView.NAME, NavigationOperation.NEW, null) );
 	}
 	
-	private void duplicateSubelement(Lot lot) {
+	private void duplicateLot(Long id) {
 		pushReturnViewState();
-		navigationUtils.navigateTo( new ViewState(InputDetailView.NAME, NavigationOperation.DUPLICATE, lot.getId()) );
+		navigationUtils.navigateTo( new ViewState(LotDetailView.NAME, NavigationOperation.DUPLICATE, id) );
 	}
 	
 	private void cancel() {
@@ -168,7 +180,7 @@ public class InputDetailView extends VerticalLayout implements View {
 	}
 		
 	private void pushReturnViewState() {
-		navigationStack.push( new ViewState(this.NAME) ); // viewState to return to
+		navigationStack.push( new ViewState(this.NAME, NavigationOperation.EDIT, input.getId()) ); // viewState to return to
 	}
 	
 	public void enter(ViewChangeEvent event) {
