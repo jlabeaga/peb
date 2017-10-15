@@ -1,17 +1,18 @@
 package com.github.jlabeaga.peb.model;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.persistence.Convert;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
+import javax.persistence.OneToMany;
 import javax.validation.constraints.NotNull;
 
 import com.github.jlabeaga.peb.converters.LocalDateAttributeConverter;
-import com.github.jlabeaga.peb.model.User.Status;
 
 
 @Entity
@@ -39,13 +40,16 @@ public class Lot extends AbstractEntity {
 	@NotNull(message = "El código es obligatorio")
     private String code;
 
-	@Convert(converter = LocalDateAttributeConverter.class)
-	private LocalDateTime inputDate;
+	@ManyToOne
+	private Input input;
 	
-	@OneToOne
+	@Convert(converter = LocalDateAttributeConverter.class)
+	private LocalDate processingDate;
+	
+	@ManyToOne
 	private Company company;
 
-	@OneToOne
+	@ManyToOne
 	private Variety variety;
 
     @Enumerated(EnumType.STRING)
@@ -59,9 +63,10 @@ public class Lot extends AbstractEntity {
 	
 	private int weightProcessed;
 	
-	@ManyToOne
-    private Input input;
+	@OneToMany(mappedBy="lot")
+    private Set<Part> parts;
 
+	private int partCounter;
 	
     public Lot() {
     	super();
@@ -78,13 +83,13 @@ public class Lot extends AbstractEntity {
 	}
 
 
-	public LocalDateTime getInputDate() {
-		return inputDate;
+	public LocalDate getProcessingDate() {
+		return processingDate;
 	}
 
 
-	public void setInputDate(LocalDateTime inputDate) {
-		this.inputDate = inputDate;
+	public void setProcessingDate(LocalDate processingDate) {
+		this.processingDate = processingDate;
 	}
 
 
@@ -167,29 +172,37 @@ public class Lot extends AbstractEntity {
 		this.input = input;
 	}
 
-	public String buildCode() {
-		String result = "";
-		if( getCompany() != null ) {
-			result += getCompany().getCode();
-			result += getCompany().getProductionType();
-			result += getCompany().getArea();
-		}
-		if( getVariety() != null ) {
-			result += getVariety().getId();
-		}
-		if( getInputDate() != null ) {
-			result += String.format("%2d", getInputDate().getDayOfMonth());
-			result += String.format("%2d", getInputDate().getMonthValue());
-		}
-		code = result;
-		return code;
-	}
 	
+	public Set<Part> getParts() {
+		return parts;
+	}
+
+
+	public void setParts(Set<Part> parts) {
+		this.parts = parts;
+	}
+
+
+	public int getPartCounter() {
+		return partCounter;
+	}
+
+
+	public void setPartCounter(int partCounter) {
+		this.partCounter = partCounter;
+	}
+
+
+	public int nextPartCounter() {
+		return ++partCounter;
+	}
 
 	@Override
 	public String toString() {
-		return "Lot [code=" + code + ", inputDate=" + inputDate + ", company=" + company.getName() + ", variety=" + variety.getName()
-				+ ", packages=" + packages + ", weightGross=" + weightGross + ", weightNet=" + weightNet + ", weightProcessed=" + weightProcessed + "]";
+		return "Lot [code=" + code + ", processingDate=" + processingDate + ", company=" + company + ", variety=" + variety
+				+ ", status=" + status + ", packages=" + packages + ", weightGross=" + weightGross + ", weightNet="
+				+ weightNet + ", weightProcessed=" + weightProcessed +", parts=" + parts
+				+ ", partCounter=" + partCounter + ", input=" + input + "]";
 	}
 
 

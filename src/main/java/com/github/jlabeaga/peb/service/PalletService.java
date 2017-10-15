@@ -9,39 +9,41 @@ import org.springframework.stereotype.Service;
 
 import com.github.jlabeaga.peb.model.Company;
 import com.github.jlabeaga.peb.model.Input;
+import com.github.jlabeaga.peb.model.Pallet;
 import com.github.jlabeaga.peb.model.SearchCriteria;
 import com.github.jlabeaga.peb.model.User;
 import com.github.jlabeaga.peb.repository.CompanyRepository;
 import com.github.jlabeaga.peb.repository.InputRepository;
+import com.github.jlabeaga.peb.repository.PalletRepository;
 import com.github.jlabeaga.peb.repository.UserRepository;
 
 @Service
-public class InputService {
+public class PalletService {
 
-	private static final Logger log = LoggerFactory.getLogger(InputService.class);
+	private static final Logger log = LoggerFactory.getLogger(PalletService.class);
 
 	@Autowired
-	private InputRepository inputRepository;
+	private PalletRepository palletRepository;
 	
-	public List<Input> findAll() {
-		return inputRepository.findAll();
+	public List<Pallet> findAll() {
+		return palletRepository.findAll();
 	}
 	
-	public Input findOne(Long id) {
-		return inputRepository.findOne(id);
+	public Pallet findOne(Long id) {
+		return palletRepository.findOne(id);
 	}
 	
 	public void delete(Long id) {
-		inputRepository.delete(id);
+		palletRepository.delete(id);
 	}
 
-	public Input save(Input input) {
-		return inputRepository.save(input);
+	public Pallet save(Pallet pallet) {
+		return palletRepository.save(pallet);
 	}
 
-	public List<Input> search(SearchCriteria searchCriteria) {
-		log.debug("InputService.searchCriteria="+searchCriteria);
-		return inputRepository.search();
+	public List<Pallet> search(SearchCriteria searchCriteria) {
+		log.debug("PalletService.searchCriteria="+searchCriteria);
+		return palletRepository.findAll();
 	}
 	
 }

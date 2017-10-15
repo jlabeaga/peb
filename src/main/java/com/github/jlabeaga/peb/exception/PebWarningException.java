@@ -1,10 +1,10 @@
 package com.github.jlabeaga.peb.exception;
 
-public class PebBusinessException extends Exception {
+public class PebWarningException extends RuntimeException {
 	
 	private static final long serialVersionUID = 1L;
 
-	public PebBusinessException(String message) {
+	public PebWarningException(String message) {
 		super(message);
 	}
 

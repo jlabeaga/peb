@@ -1,6 +1,7 @@
 package com.github.jlabeaga.peb.model;
 
 import java.time.LocalDateTime;
+import java.util.Set;
 
 import javax.persistence.Convert;
 import javax.persistence.Entity;
@@ -26,7 +27,7 @@ public class Customer extends AbstractEntity {
     private String locationAddressLine1;
     
     private String locationAddressLine2;
-
+    
     @Convert(converter = LocalDateTimeAttributeConverter.class)
     private LocalDateTime dateCreated;
 
@@ -88,13 +89,21 @@ public class Customer extends AbstractEntity {
 	public void setLocationAddressLine2(String locationAddressLine2) {
 		this.locationAddressLine2 = locationAddressLine2;
 	}
-	
+
+	public LocalDateTime getDateCreated() {
+		return dateCreated;
+	}
+
+	public void setDateCreated(LocalDateTime dateCreated) {
+		this.dateCreated = dateCreated;
+	}
+
 	@Override
 	public String toString() {
-		return "Company [name=" + name + "]";
+		return "Customer [name=" + name + ", nif=" + nif + ", dateCreated=" + dateCreated
+				+ "]";
 	}
-    
-
+	
 	
 
 }

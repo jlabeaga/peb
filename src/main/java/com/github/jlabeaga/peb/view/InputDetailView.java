@@ -160,7 +160,7 @@ public class InputDetailView extends VerticalLayout implements View {
 			inputService.save(input);
 		}
 		pushReturnViewState();
-		navigationUtils.navigateTo( new ViewState(LotDetailView.NAME, NavigationOperation.NEW, null) );
+		navigationUtils.navigateTo( new ViewState(LotDetailView.NAME, NavigationOperation.NEW, null, input.getId()) );
 	}
 	
 	private void duplicateLot(Long id) {

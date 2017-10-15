@@ -1,4 +1,4 @@
-package com.github.jlabeaga.peb.repository;
+package com.github.jlabeaga.peb.service;
 
 import java.util.List;
 
@@ -10,6 +10,7 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Service;
 
 import com.github.jlabeaga.peb.model.UserDTO;
+import com.github.jlabeaga.peb.model.Variety;
 import com.github.jlabeaga.peb.view.UserView;
 
 @Service
@@ -36,5 +37,16 @@ public class QueryService {
 		log.debug("result="+ result);
 		return result;
 	}
+
+	public List<Variety> listVarieties(){
+		String sql = "SELECT id, code, name "
+				+ "FROM variety "
+				+ "ORDER BY name";
+		List<Variety> result = namedParameterJdbcTemplate.query(sql, new BeanPropertyRowMapper(Variety.class));
+		log.debug("sql="+ sql);
+		log.debug("result="+ result);
+		return result;
+	}
+	
 	
 }

@@ -5,7 +5,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.github.jlabeaga.peb.model.UserDTO;
-import com.github.jlabeaga.peb.repository.QueryService;
+import com.github.jlabeaga.peb.service.QueryService;
 import com.github.jlabeaga.peb.service.UserService;
 import com.github.jlabeaga.peb.ui.PebUI;
 import com.vaadin.navigator.View;

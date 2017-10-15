@@ -2,9 +2,12 @@ package com.github.jlabeaga.peb.model;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.Set;
 
 import javax.persistence.Convert;
 import javax.persistence.Entity;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.validation.constraints.NotNull;
 
@@ -29,15 +32,16 @@ public class Pallet extends AbstractEntity {
 
 	private Status status = Status.PREPARING;
 	
-	@Convert(converter = LocalDateAttributeConverter.class)
-	private LocalDateTime outputDate;
-	
-	@OneToOne
-	private Customer customer;
-
 	private int weight;
 	
-	private BigDecimal price = new BigDecimal(0);
+	@OneToMany(mappedBy="pallet")
+	private Set<Part> parts;
+	
+	@ManyToOne
+	private Customer proposedCustomer;
+	
+	@ManyToOne
+	private Shipment shipment;
 	
     public Pallet() {
     	super();
@@ -59,22 +63,6 @@ public class Pallet extends AbstractEntity {
 		this.status = status;
 	}
 
-	public LocalDateTime getOutputDate() {
-		return outputDate;
-	}
-
-	public void setOutputDate(LocalDateTime outputDate) {
-		this.outputDate = outputDate;
-	}
-
-	public Customer getCustomer() {
-		return customer;
-	}
-
-	public void setCustomer(Customer customer) {
-		this.customer = customer;
-	}
-
 	public int getWeight() {
 		return weight;
 	}
@@ -84,20 +72,35 @@ public class Pallet extends AbstractEntity {
 	}
 
 	
-	public BigDecimal getPrice() {
-		return price;
+	public Set<Part> getParts() {
+		return parts;
 	}
 
-	public void setPrice(BigDecimal price) {
-		this.price = price;
+	public void setParts(Set<Part> parts) {
+		this.parts = parts;
+	}
+
+	public Customer getProposedCustomer() {
+		return proposedCustomer;
+	}
+
+	public void setProposedCustomer(Customer proposedCustomer) {
+		this.proposedCustomer = proposedCustomer;
+	}
+
+	public Shipment getShipment() {
+		return shipment;
+	}
+
+	public void setShipment(Shipment shipment) {
+		this.shipment = shipment;
 	}
 
 	@Override
 	public String toString() {
-		return "Pallet [code=" + code + ", weight=" + weight + ", status=" + status + ", outputDate=" + outputDate 
-				+ ", customer=" + ((customer==null)?"":customer.getName()) + "]";
+		return "Pallet [code=" + code + ", status=" + status + ", weight=" + weight + ", parts=" + parts
+				+ ", proposedCustomer=" + proposedCustomer + ", shipment=" + shipment + "]";
 	}
 
-
-
+	
 }

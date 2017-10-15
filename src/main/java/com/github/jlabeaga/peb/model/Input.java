@@ -3,6 +3,7 @@ package com.github.jlabeaga.peb.model;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Set;
 
 import javax.persistence.Convert;
 import javax.persistence.Entity;
@@ -24,8 +25,8 @@ public class Input extends AbstractEntity {
     @OneToOne
     private Company company;
     
-    @OneToMany
-    private List<Lot> lots;
+    @OneToMany(mappedBy="input")
+    private Set<Lot> lots;
     
     public Input() {
     	super();
@@ -54,11 +55,11 @@ public class Input extends AbstractEntity {
 	}
 
 	
-	public List<Lot> getLots() {
+	public Set<Lot> getLots() {
 		return lots;
 	}
 
-	public void setLots(List<Lot> lots) {
+	public void setLots(Set<Lot> lots) {
 		this.lots = lots;
 	}
 

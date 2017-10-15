@@ -12,7 +12,10 @@ import com.github.jlabeaga.peb.model.Lot;
 @Repository
 public interface LotRepository extends JpaRepository<Lot, Long> {
 	
-	@Query("SELECT l FROM Lot l WHERE l.input.id = :inputId")
+	@Query("SELECT l FROM Lot l JOIN l.input i WHERE i.id = :inputId")
 	public List<Lot> findByInput(@Param("inputId") Long inputId);
+
+	@Query("SELECT l FROM Lot l LEFT JOIN FETCH l.parts p WHERE l.id = :id")
+	public Lot findOneWithParts(@Param("id") Long id);
 	
 }

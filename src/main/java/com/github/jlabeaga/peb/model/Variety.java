@@ -12,20 +12,29 @@ public class Variety implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@Id
-    private String id;
+    private Long id;
     
-    private String name;
-    
-    public String getId() {
-        return id;
-    }
+    private String code;
 
-    protected void setId(String id) {
-        this.id = id;
-    }
-
+	private String name;
     
-    public String getName() {
+    public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
+	}
+
+	public String getCode() {
+		return code;
+	}
+
+	public void setCode(String code) {
+		this.code = code;
+	}
+
+	public String getName() {
 		return name;
 	}
 

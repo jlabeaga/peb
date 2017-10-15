@@ -7,14 +7,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.github.jlabeaga.peb.model.Company;
 import com.github.jlabeaga.peb.model.QUser;
 import com.github.jlabeaga.peb.model.User;
-import com.github.jlabeaga.peb.model.UserDTO;
-import com.github.jlabeaga.peb.repository.CompanyRepository;
 import com.github.jlabeaga.peb.repository.UserRepository;
 import com.querydsl.core.types.Predicate;
-import com.querydsl.jpa.impl.JPAQueryFactory;
 
 @Service
 public class UserService {
@@ -45,8 +41,8 @@ public class UserService {
 		userRepository.delete(id);
 	}
 
-	public void save(User user) {
-		userRepository.save(user);
+	public User save(User user) {
+		return userRepository.save(user);
 	}
 
 	public List<User> findActiveUsersOfCompany(Long companyId) {
