@@ -40,7 +40,7 @@
     <!-- it logs hibernate input params -->
     <logger name="org.hibernate.type.descriptor.sql.BasicBinder" level="trace" />
     <!-- it logs hibernate output values -->
-    <!-- logger name="org.hibernate.type.descriptor.sql.BasicExtractor" level="trace" /-->
+    <logger name="org.hibernate.type.descriptor.sql.BasicExtractor" level="trace" />
     <logger name="org.springframework.web" level="info" />
     <logger name="org.springframework.security" level="debug" />
 
