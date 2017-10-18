@@ -3,6 +3,7 @@ package com.github.jlabeaga.peb.ui;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.github.jlabeaga.peb.service.RepositoryService;
 import com.github.jlabeaga.peb.view.CompanyView;
 import com.github.jlabeaga.peb.view.HelloView;
 import com.github.jlabeaga.peb.view.InputView;
@@ -19,17 +20,20 @@ import com.vaadin.ui.Notification;
 public class MenuFactory {
 
 	@Autowired
-	private NavigationStack navigationStack; 
+	private NavigationStack navigationStack;
+	
+	@Autowired
+	private RepositoryService repositoryService;
 
 	public MenuBar buildHomeMenu(MenuBar menu, Navigator navigator) {
 		MenuItem userMenuItem = menu.addItem("Home", 
-				(MenuItem selectedItem) -> { navigationStack.reset(); navigator.navigateTo(""); }
+				(MenuItem selectedItem) -> { repositoryService.flushAndClear(); navigationStack.reset(); navigator.navigateTo(""); }
 		);
 		return menu;
 	}
 
 	public MenuBar buildUserMenu(MenuBar menu, Navigator navigator) {
-		MenuItem userMenuItem = menu.addItem("Usuario", null);
+		MenuItem userMenuItem = menu.addItem("Usuario", null );
 		navigator.addView("", EmptyView.class);
 
 		MenuItem helloMenuItem = userMenuItem.addItem("Hello",
